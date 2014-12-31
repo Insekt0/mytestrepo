@@ -4,15 +4,14 @@
 #include "common.h"
 #include <string>
 #include <vector>
+#include <QWidget>
 
 using namespace std;
-
-const string defaultPath = "D://studia//MGR//AIM//projekt//Base//Examples//";
 
 class DatabaseManager {
 public:
     static DatabaseManager& get();
-    void updateDatabase(string path = defaultPath);
+    DATABASE_ERRORS updateDatabase(string, QWidget*);
 private:
     DatabaseManager() { }
     void checkForFilesInDatabase();

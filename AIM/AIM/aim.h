@@ -1,6 +1,8 @@
 #ifndef AIM_H
 #define AIM_H
 
+#include "../../../Includes/common.h"
+
 #include <QtWidgets/QMainWindow>
 #include <string>
 #include "ui_aim.h"
@@ -14,6 +16,7 @@ class AIM : public QMainWindow
 public slots:
     void startButtonClicked();
     void loadImageButtonClicked();
+    void refreshDatabaseButtonClicked();
     void pathToDatabaseChanged(const QString& newPath) { m_pathToDatabase = newPath.toStdString(); }
 
 public:

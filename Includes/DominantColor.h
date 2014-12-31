@@ -1,6 +1,8 @@
 #ifndef DOMINANTCOLOR_H
 #define DOMINANTCOLOR_H
 
+#include "common.h"
+
 #include <QColor>
 #include <QImage>
 #include <QRgb>

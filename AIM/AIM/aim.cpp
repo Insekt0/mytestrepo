@@ -1,11 +1,14 @@
 #include "aim.h"
 #include "../../../Includes/DominantColor.h"
+#include "../../../Includes/DatabaseManager.h"
 #include <QFileDialog>
+#include <QMessageBox>
 
 AIM::AIM(QWidget *parent)
     : QMainWindow(parent)
     , m_mainPictureScene(0)
     , m_mainImage(0)
+    , m_pathToDatabase(defaultPath)
 {
     for (int i = 0; i < 8; ++i)
     {
@@ -16,6 +19,7 @@ AIM::AIM(QWidget *parent)
     moveCellsIntoTables();
     QObject::connect(m_ui.startButton, SIGNAL(clicked()),this, SLOT(startButtonClicked()));
     QObject::connect(m_ui.loadButton, SIGNAL(clicked()), this, SLOT(loadImageButtonClicked()));
+    QObject::connect(m_ui.refreshDatabase,  SIGNAL(clicked()), this, SLOT(refreshDatabaseButtonClicked()));
     QObject::connect(m_ui.baseDirField, SIGNAL(textChanged(const QString &)),this, SLOT(pathToDatabaseChanged(const QString &)));
 }
 
@@ -68,6 +72,24 @@ void AIM::moveCellsIntoTables()
     
 }
 
+void AIM::refreshDatabaseButtonClicked()
+{
+    switch (DatabaseManager::get().updateDatabase(m_pathToDatabase, this))
+    {
+    case Ok:    
+        QMessageBox::information(this, tr(""), tr("Baza zostala zaktualizowana") );
+        break;
+    case DirectoryEmpty:
+        QMessageBox::warning(this, tr(""), tr("Katalog z baza danych nie zawiera obrazkow!") );
+        break;
+    case RefreshAborted:
+        QMessageBox::warning(this, tr(""), tr("Odswiezanie zostalo przerwane!") );
+        break;
+    default:
+        QMessageBox::critical(this, tr(""), tr("Niezidentyfikowany blad!") );
+    }
+}
+
 void AIM::startButtonClicked()
 {
 
@@ -96,12 +118,14 @@ void AIM::startButtonClicked()
         m_dominantColors[i]->setScene(m_dominantColorsScene[i]);
     }
 
+    // FIXME sprawdz czy baza jest aktualna
+    // Wywolaj nowa metode z klasy database manager ktora to sprawdza
      
 }
 
 void AIM::loadImageButtonClicked()
 {
-    string filename = QFileDialog::getOpenFileName(this,tr("Otw\303\263rz plik z Sudoku"), ".", tr("JPEG (*.jpg;*.jpeg); PNG (*.png); BMP (*.bmp)")).toStdString();
+    string filename = QFileDialog::getOpenFileName(this,tr("Otw\303\263rz plik z Sudoku"), ".", tr("JPEG (*.jpg;*.jpeg);; PNG (*.png);; BMP (*.bmp);; Wszystkie pliki (*.*)")).toStdString();
     if(!filename.empty()){
         if (m_mainPictureScene)
             delete m_mainPictureScene;

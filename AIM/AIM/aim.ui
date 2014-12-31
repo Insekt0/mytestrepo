@@ -10,8 +10,32 @@
     <height>840</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>840</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1000</width>
+    <height>840</height>
+   </size>
+  </property>
+  <property name="mouseTracking">
+   <bool>false</bool>
+  </property>
   <property name="windowTitle">
-   <string>AIM</string>
+   <string>Michał Jurkiewicz - Projekt AIM</string>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QGraphicsView" name="mainPicture">
@@ -24,7 +48,7 @@
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -335,7 +359,7 @@
    <widget class="QLabel" name="baseDirLabel">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>140</x>
       <y>740</y>
       <width>111</width>
       <height>16</height>
@@ -348,7 +372,7 @@
    <widget class="QLineEdit" name="baseDirField">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>60</x>
       <y>760</y>
       <width>231</width>
       <height>22</height>
@@ -364,9 +388,9 @@
    <widget class="QPushButton" name="loadButton">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>350</x>
       <y>760</y>
-      <width>101</width>
+      <width>111</width>
       <height>25</height>
      </rect>
     </property>
@@ -377,9 +401,9 @@
    <widget class="QPushButton" name="startButton">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>730</x>
       <y>760</y>
-      <width>171</width>
+      <width>151</width>
       <height>25</height>
      </rect>
     </property>
@@ -580,7 +604,7 @@
     <property name="geometry">
      <rect>
       <x>400</x>
-      <y>280</y>
+      <y>290</y>
       <width>221</width>
       <height>20</height>
      </rect>
@@ -602,6 +626,19 @@
      <string>Badany obrazek:</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="refreshDatabase">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>760</y>
+      <width>151</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Odśwież bazę danych</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -612,14 +649,6 @@
      <height>21</height>
     </rect>
    </property>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
