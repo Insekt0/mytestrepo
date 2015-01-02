@@ -8,7 +8,7 @@ enum DATABASE_ERRORS
     RefreshAborted = 2
 };
 
-#include <string>
-const std::string defaultPath = "D://studia//MGR//AIM//projekt//Base//Examples//";
+#include <QString>
+const QString defaultPath = "D:\\studia\\MGR\\AIM\\projekt\\Base\\Short\\";
 
 #endif // COMMON_H

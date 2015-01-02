@@ -21,6 +21,8 @@ AIM::AIM(QWidget *parent)
     QObject::connect(m_ui.loadButton, SIGNAL(clicked()), this, SLOT(loadImageButtonClicked()));
     QObject::connect(m_ui.refreshDatabase,  SIGNAL(clicked()), this, SLOT(refreshDatabaseButtonClicked()));
     QObject::connect(m_ui.baseDirField, SIGNAL(textChanged(const QString &)),this, SLOT(pathToDatabaseChanged(const QString &)));
+
+    m_ui.baseDirField->setText(QApplication::translate("AIMClass", defaultPath.toUtf8().constData(), 0));
 }
 
 AIM::~AIM()
@@ -125,12 +127,14 @@ void AIM::startButtonClicked()
 
 void AIM::loadImageButtonClicked()
 {
-    string filename = QFileDialog::getOpenFileName(this,tr("Otw\303\263rz plik z Sudoku"), ".", tr("JPEG (*.jpg;*.jpeg);; PNG (*.png);; BMP (*.bmp);; Wszystkie pliki (*.*)")).toStdString();
+    string filename = QFileDialog::getOpenFileName(this,tr("Otw\303\263rz plik z obrazem"), ".", tr("JPEG (*.jpg;*.jpeg);; PNG (*.png);; BMP (*.bmp);; Wszystkie pliki (*.*)")).toStdString();
     if(!filename.empty()){
         if (m_mainPictureScene)
             delete m_mainPictureScene;
         if (!m_mainImage)
             m_mainImage = new QImage();
+        QString text = QString("filename = %1").arg(QString::fromStdString(filename));
+        QMessageBox::information(this, tr(""), text );
         m_mainPictureScene = new QGraphicsScene(m_ui.mainPicture);
         m_mainImage->load(QString::fromStdString(filename));
         int width = m_ui.mainPicture->width();

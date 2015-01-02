@@ -17,7 +17,7 @@ public slots:
     void startButtonClicked();
     void loadImageButtonClicked();
     void refreshDatabaseButtonClicked();
-    void pathToDatabaseChanged(const QString& newPath) { m_pathToDatabase = newPath.toStdString(); }
+    void pathToDatabaseChanged(const QString& newPath) { m_pathToDatabase = newPath; }
 
 public:
     AIM(QWidget *parent = 0);
@@ -32,7 +32,7 @@ private:
     QGraphicsView* m_dominantColors[8];
     QGraphicsScene* m_dominantColorsScene[8];
     QGraphicsScene* m_mainPictureScene;
-    string m_pathToDatabase;
+    QString m_pathToDatabase;
     QImage* m_mainImage;
 
 };

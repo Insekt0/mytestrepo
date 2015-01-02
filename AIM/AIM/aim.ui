@@ -382,7 +382,7 @@
      <set>Qt::ImhDigitsOnly</set>
     </property>
     <property name="text">
-     <string>D:\studia\MGR\AIM\projekt\Base\Examples\</string>
+     <string>D:\studia\MGR\AIM\projekt\Base\Short\</string>
     </property>
    </widget>
    <widget class="QPushButton" name="loadButton">
