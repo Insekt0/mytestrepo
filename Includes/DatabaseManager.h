@@ -12,7 +12,7 @@ using namespace std;
 class DatabaseManager {
 public:
     static DatabaseManager& get();
-    DATABASE_ERRORS updateDatabase(QString, QWidget*);
+    DATABASE_ERRORS updateDatabase(QString, QWidget*, bool cleanBuild = false);
     map<QString,vector<QColor>> getDatabase() const { return m_datebaseMap; }
 private:
     DatabaseManager() { }

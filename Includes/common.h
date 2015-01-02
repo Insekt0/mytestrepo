@@ -9,6 +9,6 @@ enum DATABASE_ERRORS
 };
 
 #include <QString>
-const QString defaultPath = "D:\\studia\\MGR\\AIM\\projekt\\Base\\Short\\";
+const QString defaultPath = "D:\\studia\\MGR\\AIM\\projekt\\Base\\Examples\\";
 
 #endif // COMMON_H

@@ -18,6 +18,7 @@ public slots:
     void loadImageButtonClicked();
     void refreshDatabaseButtonClicked();
     void pathToDatabaseChanged(const QString& newPath) { m_pathToDatabase = newPath; }
+    void setCleanAndRebuildFlag(bool flag) { m_cleanAndRebuildFlag = flag; }
 
 public:
     AIM(QWidget *parent = 0);
@@ -34,6 +35,7 @@ private:
     QGraphicsScene* m_mainPictureScene;
     QString m_pathToDatabase;
     QImage* m_mainImage;
+    bool m_cleanAndRebuildFlag;
 
 };
 

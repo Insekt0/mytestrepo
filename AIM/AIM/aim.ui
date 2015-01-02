@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>840</height>
+    <height>860</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>1000</width>
-    <height>840</height>
+    <height>860</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>1000</width>
-    <height>840</height>
+    <height>860</height>
    </size>
   </property>
   <property name="mouseTracking">
@@ -388,7 +388,7 @@
    <widget class="QPushButton" name="loadButton">
     <property name="geometry">
      <rect>
-      <x>350</x>
+      <x>330</x>
       <y>760</y>
       <width>111</width>
       <height>25</height>
@@ -637,6 +637,19 @@
     </property>
     <property name="text">
      <string>Odśwież bazę danych</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cleanAndRebuildDatabase">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>790</y>
+      <width>191</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Wyczyść i przebuduj bazę danych</string>
     </property>
    </widget>
   </widget>

@@ -14,8 +14,9 @@ DatabaseManager& DatabaseManager::get()
     return instance;
 }
 
-DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget)
+DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, bool cleanBuild)
 {
+    m_datebaseMap.clear();
     QStringList nameFilter;
     nameFilter << "*.png" << "*.jpeg" << "*.jpg" << "*.bmp";
     QDir directory(path);
@@ -25,9 +26,8 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget)
 
     QString filename="database.txt";
     QFile file(filename);
-    if (file.exists() && file.open(QIODevice::ReadOnly))
+    if (!cleanBuild && file.exists() && file.open(QIODevice::ReadOnly))
     {
-        m_datebaseMap.clear();
         QTextStream stream(&file);
         QString line;
         QStringList lineInList;
@@ -59,7 +59,6 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget)
         file.close();
     }
 
-    
     QProgressDialog progress("Odswiezanie bazy danych...", "Przerwij", 0, numFiles, widget);
     progress.setWindowModality(Qt::WindowModal);
 
@@ -76,7 +75,7 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget)
 
         map<QString,vector<QColor>>::const_iterator it = m_datebaseMap.find(m_filesInDirectory[i]);
         if (it != m_datebaseMap.end())
-            continue; // FIXME moze sprawdz czy sie zgadzaja kolory dominujace dla plikow
+            continue;
 
         QImage tempImage;
         QString fullFilename = path + m_filesInDirectory[i];
@@ -89,12 +88,6 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget)
         m_datebaseMap.insert(std::make_pair(m_filesInDirectory[i], dominantColors));
     }
     progress.setValue(numFiles);
-
-    if (!hasRefreshed)
-    {
-        m_datebaseMap.clear();
-        return RefreshAborted;
-    }
 
     file.remove();
 
@@ -117,7 +110,11 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget)
             stream << endl;
         }
     }
+    
+    file.close();
 
+    if (!hasRefreshed)
+        return RefreshAborted;
 
     return Ok;
 }

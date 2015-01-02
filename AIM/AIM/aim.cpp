@@ -9,6 +9,7 @@ AIM::AIM(QWidget *parent)
     , m_mainPictureScene(0)
     , m_mainImage(0)
     , m_pathToDatabase(defaultPath)
+    , m_cleanAndRebuildFlag(false)
 {
     for (int i = 0; i < 8; ++i)
     {
@@ -21,6 +22,7 @@ AIM::AIM(QWidget *parent)
     QObject::connect(m_ui.loadButton, SIGNAL(clicked()), this, SLOT(loadImageButtonClicked()));
     QObject::connect(m_ui.refreshDatabase,  SIGNAL(clicked()), this, SLOT(refreshDatabaseButtonClicked()));
     QObject::connect(m_ui.baseDirField, SIGNAL(textChanged(const QString &)),this, SLOT(pathToDatabaseChanged(const QString &)));
+    QObject::connect(m_ui.cleanAndRebuildDatabase, SIGNAL(toggled(bool)),this, SLOT(setCleanAndRebuildFlag(bool)));
 
     m_ui.baseDirField->setText(QApplication::translate("AIMClass", defaultPath.toUtf8().constData(), 0));
 }
@@ -76,7 +78,7 @@ void AIM::moveCellsIntoTables()
 
 void AIM::refreshDatabaseButtonClicked()
 {
-    switch (DatabaseManager::get().updateDatabase(m_pathToDatabase, this))
+    switch (DatabaseManager::get().updateDatabase(m_pathToDatabase, this, m_cleanAndRebuildFlag))
     {
     case Ok:    
         QMessageBox::information(this, tr(""), tr("Baza zostala zaktualizowana") );
@@ -127,20 +129,20 @@ void AIM::startButtonClicked()
 
 void AIM::loadImageButtonClicked()
 {
-    string filename = QFileDialog::getOpenFileName(this,tr("Otw\303\263rz plik z obrazem"), ".", tr("JPEG (*.jpg;*.jpeg);; PNG (*.png);; BMP (*.bmp);; Wszystkie pliki (*.*)")).toStdString();
-    if(!filename.empty()){
+    QString filename = QFileDialog::getOpenFileName(this,tr("Otw\303\263rz plik z obrazem"), ".", tr("JPEG (*.jpg;*.jpeg);; PNG (*.png);; BMP (*.bmp)"));
+    if(!filename.isEmpty()){
         if (m_mainPictureScene)
             delete m_mainPictureScene;
         if (!m_mainImage)
             m_mainImage = new QImage();
-        QString text = QString("filename = %1").arg(QString::fromStdString(filename));
-        QMessageBox::information(this, tr(""), text );
+        // QString text = QString("filename = %1").arg(filename);
+        // QMessageBox::information(this, tr(""), text );
         m_mainPictureScene = new QGraphicsScene(m_ui.mainPicture);
-        m_mainImage->load(QString::fromStdString(filename));
+        m_mainImage->load(filename);
         int width = m_ui.mainPicture->width();
         int height = m_ui.mainPicture->height();
         QPixmap pixmap = m_mainImage->width() > m_mainImage->height() ? QPixmap::fromImage(*m_mainImage).scaledToWidth(width-2) : QPixmap::fromImage(*m_mainImage).scaledToHeight(height-2);
-        QFileInfo fileInfo(QString::fromStdString(filename));
+        QFileInfo fileInfo(filename);
         m_ui.mainText->setText(fileInfo.fileName());
         m_mainPictureScene->addPixmap(pixmap);
         m_ui.mainPicture->setScene(m_mainPictureScene);
