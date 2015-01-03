@@ -12,6 +12,6 @@ enum DATABASE_ERRORS
 const QString defaultPath = "D:\\studia\\MGR\\AIM\\projekt\\Base\\Examples\\";
 const QString databaseFilename="database.txt";
 const int DOMINANTCOLORS_NUMBER = 8;
-const int SHIFT_STEP = 5;
+const int SHIFT_STEP = 4;
 
 #endif // COMMON_H
