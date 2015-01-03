@@ -14,13 +14,17 @@ class DatabaseManager {
 public:
     static DatabaseManager& get();
     DATABASE_ERRORS updateDatabase(QString, QWidget*, bool cleanBuild = false);
-    map<QString,vector<QColor>>& getDatabase() { return m_datebaseMap; }
+    map<int, QStringList>& getDatabase() { return m_datebaseMap; }
+    QStringList& getDatabaseFilesList() { return m_databaseMapFilesList; }
     void readDatabaseFromFile(QFile& file, QWidget* widget, bool cleanBuild = false);
+    unsigned convertFromRGBToint(int R, int G, int B);
 private:
     DatabaseManager() { }
     void checkForFilesInDatabase();
+    void insertToDatabase(int value, QString filename);
     QStringList m_filesInDirectory;
-    map<QString,vector<QColor>> m_datebaseMap;
+    map<int, QStringList> m_datebaseMap;
+    QStringList m_databaseMapFilesList;
 };
 
 #endif // DATABASEMANAGER_H

@@ -30,8 +30,8 @@ private:
     QGraphicsView* m_pictures[8];
     QGraphicsScene* m_picturesScene[8];
     QLineEdit* m_labels[8];
-    QGraphicsView* m_dominantColors[DOMINANTCOLORS_NUMBER];
-    QGraphicsScene* m_dominantColorsScene[DOMINANTCOLORS_NUMBER];
+    QGraphicsView* m_dominantColors[8];
+    QGraphicsScene* m_dominantColorsScene[8];
     QGraphicsScene* m_mainPictureScene;
     QString m_pathToDatabase;
     QImage* m_mainImage;

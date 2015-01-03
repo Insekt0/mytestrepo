@@ -3,9 +3,8 @@
 #include <QProgressDialog>
 #include <QDir>
 #include <QTextStream>
-
-// remove me
 #include <QMessageBox>
+
 
 // static
 DatabaseManager& DatabaseManager::get()
@@ -24,36 +23,50 @@ void DatabaseManager::readDatabaseFromFile(QFile& file, QWidget* widget, bool cl
         while (!stream.atEnd())
         {
             line = stream.readLine();
-            //if (line.isEmpty())
-                //break;
             lineInList = line.split('*');
-            vector<QColor> dominantColors;
-            dominantColors.reserve(DOMINANTCOLORS_NUMBER);
-            if (lineInList.size() != 25)
-            {
-                QMessageBox::warning(widget, widget->tr(""), widget->tr("Baza niepoprawna! Zostanie stworzona od nowa!") );
-                m_datebaseMap.clear();
-                break;
-            }
-            for (int i = 0; i < 8; ++i)
-            {
-                int R = lineInList[1+3*i].toInt();
-                int G = lineInList[1+3*i+1].toInt();
-                int B = lineInList[1+3*i+2].toInt();
-                // QString text = QString("R = %1, G = %2, B = %3").arg(QString::number(R),QString::number(G),QString::number(B));
-                // QMessageBox::information(widget, widget->tr(""), text );
-                dominantColors.push_back(QColor(R,G,B));
-            }
-            m_datebaseMap.insert(std::make_pair(lineInList[0], dominantColors));
+            int value = lineInList[0].toInt();
+            for (int i = 1; i < lineInList.size(); ++i)
+                insertToDatabase(value, lineInList[i]);
         }
         file.close();
     }
 }
 
+void DatabaseManager::insertToDatabase(int value, QString filename)
+{
+    map<int, QStringList>::iterator it = m_datebaseMap.find(value);
+    if (it == m_datebaseMap.end())
+    {
+        QStringList list;
+        list << filename;
+        m_datebaseMap.insert(make_pair(value, list));
+        if (!m_databaseMapFilesList.contains(filename))
+            m_databaseMapFilesList << filename;
+        return;
+    }
+    if (!it->second.contains(filename))
+        it->second << filename;
+    if (!m_databaseMapFilesList.contains(filename))
+        m_databaseMapFilesList << filename;
+}
+
+unsigned DatabaseManager::convertFromRGBToint(int R, int G, int B)
+{
+    unsigned result = 0;
+    int newR = R >> SHIFT_STEP;
+    int newG = G >> SHIFT_STEP;
+    int newB = B >> SHIFT_STEP;
+    
+    result = (newR << ((8-SHIFT_STEP)*2)) + (newG << (8 - SHIFT_STEP)) + newB;
+    return result;
+}
 
 DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, bool cleanBuild)
 {
     m_datebaseMap.clear();
+    m_databaseMapFilesList.clear();
+    QStringList emptyList;
+
     QStringList nameFilter;
     nameFilter << "*.png" << "*.jpeg" << "*.jpg" << "*.bmp";
     QDir directory(path);
@@ -61,11 +74,7 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, b
     int numFiles = m_filesInDirectory.size();
 
     if(!numFiles)
-    {
-        QString text = QString("Wskazany katalog z baz¹ danych nie zawiera obrazów! Wska¿ inny katalog");
-        QMessageBox::warning(widget, widget->tr(""), text );
         return DirectoryEmpty;
-    }
     
     QFile file(databaseFilename);
     readDatabaseFromFile(file, widget, cleanBuild);
@@ -84,19 +93,25 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, b
             break;
         }
 
-        map<QString,vector<QColor>>::const_iterator it = m_datebaseMap.find(m_filesInDirectory[i]);
-        if (it != m_datebaseMap.end())
+        if (m_databaseMapFilesList.contains(m_filesInDirectory[i]))
             continue;
 
         QImage tempImage;
-        QString fullFilename = path + m_filesInDirectory[i];
+        QString fullFilename = path + "\\" + m_filesInDirectory[i];
         tempImage.load(fullFilename);
 
         // QString text = QString("tempImage. name = %3, width() = %1, height() = %2").arg(QString::number(tempImage.width()),QString::number(tempImage.height()),fullFilename);
         // QMessageBox::information(widget, widget->tr(""), text );
 
         vector<QColor> dominantColors = DominantColors::get().countDominantColors(tempImage);
-        m_datebaseMap.insert(std::make_pair(m_filesInDirectory[i], dominantColors));
+        int R, G, B, value;
+
+        for (int k = 0; k < dominantColors.size(); ++k)
+        {
+            dominantColors[k].getRgb(&R, &G, &B);
+            value = convertFromRGBToint(R, G, B);
+            insertToDatabase(value, m_filesInDirectory[i]);
+        }
     }
     progress.setValue(numFiles);
 
@@ -106,18 +121,12 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, b
     {
         
         QTextStream stream(&file);
-        for (map<QString,vector<QColor>>::iterator it = m_datebaseMap.begin(); it != m_datebaseMap.end(); ++it)
+        for (map<int, QStringList>::iterator it = m_datebaseMap.begin(); it != m_datebaseMap.end(); ++it)
         {
             stream << it->first;
-            vector<QColor> dominantColors = it->second;
-            int R = 0;
-            int G = 0;
-            int B = 0;
-            for (int i = 0; i < dominantColors.size(); ++i)
-            {
-                dominantColors[i].getRgb(&R, &G, &B);
-                stream << "*" << R << "*" << G << "*" << B;
-            }
+            QStringList files = it->second;
+            for (int i = 0; i < files.size(); ++i)
+                stream << "*" << files[i];
             stream << endl;
         }
     }

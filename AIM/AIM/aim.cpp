@@ -82,7 +82,7 @@ void AIM::refreshDatabaseButtonClicked()
         QMessageBox::information(this, tr(""), tr("Baza zostala zaktualizowana") );
         break;
     case DirectoryEmpty:
-        QMessageBox::warning(this, tr(""), tr("Katalog z baza danych nie zawiera obrazkow!") );
+        QMessageBox::warning(this, tr(""), tr("Katalog z baza danych nie zawiera obrazkow! Wskaz inny katalog!") );
         break;
     case RefreshAborted:
         QMessageBox::warning(this, tr(""), tr("Odswiezanie zostalo przerwane!") );
@@ -92,9 +92,17 @@ void AIM::refreshDatabaseButtonClicked()
     }
 }
 
-bool sortFunction (pair<QString,double> first_pair, pair<QString,double> second_pair) {
-    return first_pair.second < second_pair.second; 
-}
+//bool sortFunction (pair<QString,double> first_pair, pair<QString,double> second_pair) {
+//    return first_pair.second > second_pair.second; 
+//}
+
+struct sortStruct
+{
+    bool operator()(int value1, int value2) const
+    {
+        return value1 > value2;
+    }
+};
 
 void AIM::startButtonClicked()
 {
@@ -102,6 +110,20 @@ void AIM::startButtonClicked()
     if (!m_mainImage)
     {
         QString text = QString("Nie wybrano obrazka!");
+        QMessageBox::warning(this, tr(""), text);
+        return;
+    }
+
+
+    QStringList nameFilter;
+    nameFilter << "*.png" << "*.jpeg" << "*.jpg" << "*.bmp";
+    QDir directory(m_pathToDatabase);
+    QStringList filesInDirectory = directory.entryList(nameFilter);
+    int numFiles = filesInDirectory.size();
+
+    if(!numFiles)
+    {
+        QString text = QString("Katalog z baza danych nie zawiera obrazkow! Wskaz inny katalog!");
         QMessageBox::warning(this, tr(""), text);
         return;
     }
@@ -139,27 +161,51 @@ void AIM::startButtonClicked()
         return;
     }
 
-    vector<pair<QString,double>> distanceVector;
+    map<QString, int> matchMapTemp;
+    map<QString, int>::iterator matchMapTempIterator;
+    multimap<int, QString, sortStruct> matchMap;
+    multimap<int, QString>::iterator matchMapIterator;
 
-    double distance = 0;
 
-    std::map<QString,vector<QColor>> databaseMap = DatabaseManager::get().getDatabase();
-    
-    for (std::map<QString,vector<QColor>>::iterator it = databaseMap.begin(); it != databaseMap.end(); ++it)
+    int matches = 0;
+    int value, R, G, B;
+    map<int, QStringList> databaseMap = DatabaseManager::get().getDatabase();
+    map<int, QStringList>::iterator it;
+    for (int i = 0; i < m_mainImageDominantColors.size(); ++i)
     {
-        vector<QColor> secondImageDominantColors = it->second;
-        distance = DominantColors::get().calculateDistance(m_mainImageDominantColors, secondImageDominantColors);
-        distanceVector.push_back(make_pair(it->first,distance));
+        m_mainImageDominantColors[i].getRgb(&R, &G, &B);
+        value = DatabaseManager::get().convertFromRGBToint(R, G, B);
+        it = databaseMap.find(value);
+        
+        if (it == databaseMap.end())
+            continue;
+
+        QStringList filesWithMatchingDominantColor = it->second;
+        for (int k = 0; k < filesWithMatchingDominantColor.size(); ++k)
+        {
+            //matchMapTempIterator = matchMapTemp.find(filesWithMatchingDominantColor[k]);
+            //if (matchMapTempIterator == matchMapTemp.end())
+            //{
+            //    matchMapTemp.insert(make_pair(filesWithMatchingDominantColor[k], 1));
+            //    continue;
+            //}
+            //++matchMapTempIterator->second;
+            matchMapTemp[filesWithMatchingDominantColor[k]] += 1;
+        }
     }
-    sort(distanceVector.begin(), distanceVector.end(), sortFunction);
+
+    for (matchMapTempIterator = matchMapTemp.begin(); matchMapTempIterator != matchMapTemp.end(); ++matchMapTempIterator)
+        matchMap.insert(make_pair(matchMapTempIterator->second, matchMapTempIterator->first));
+
+    //sort(matchMap.begin(), matchMap.end(), sortFunction);
     
     int numberOfImages = 0;
 
-    for (int i = 0; i < distanceVector.size(); ++i)
+    for (matchMapIterator = matchMap.begin(); matchMapIterator != matchMap.end(); ++matchMapIterator)
     {
         if(numberOfImages == 8)
             break;
-        QString filename = defaultPath + distanceVector[i].first;
+        QString filename = m_pathToDatabase + "\\" + matchMapIterator->second;
         QFile file(filename);
         if (!file.exists())
             continue;
@@ -173,17 +219,12 @@ void AIM::startButtonClicked()
         if (m_picturesScene[numberOfImages])
            delete m_picturesScene[numberOfImages];
         m_picturesScene[numberOfImages] = new QGraphicsScene(m_pictures[numberOfImages]);
-
-        m_labels[numberOfImages]->setText(distanceVector[i].first);
+        QString text = matchMapIterator->second + " [" + QString::number(matchMapIterator->first) + "]";
+        m_labels[numberOfImages]->setText(text);
         m_picturesScene[numberOfImages]->addPixmap(pixmap);
-        m_pictures[i]->setScene(m_picturesScene[numberOfImages]);
+        m_pictures[numberOfImages]->setScene(m_picturesScene[numberOfImages]);
         ++numberOfImages;
     }
-
-
-
-
-    // FIXME: Narysuj 8 najbardziej podobnych na ekranie
 
 }
 
@@ -196,6 +237,17 @@ void AIM::loadImageButtonClicked()
         if (!m_mainImage)
             m_mainImage = new QImage();
         m_hasChangedMainImage = true;
+
+        for (int i = 0; i < 8; ++i)
+        {
+            if (m_picturesScene[i])
+                m_picturesScene[i]->clear();
+            if (m_labels[i])
+                m_labels[i]->clear();
+            if (m_dominantColorsScene[i])
+                m_dominantColorsScene[i]->clear();
+        }
+            
         // QString text = QString("filename = %1").arg(filename);
         // QMessageBox::information(this, tr(""), text );
         m_mainPictureScene = new QGraphicsScene(m_ui.mainPicture);
