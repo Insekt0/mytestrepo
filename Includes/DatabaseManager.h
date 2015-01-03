@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <QFile>
 #include <QWidget>
 
 using namespace std;
@@ -13,7 +14,8 @@ class DatabaseManager {
 public:
     static DatabaseManager& get();
     DATABASE_ERRORS updateDatabase(QString, QWidget*, bool cleanBuild = false);
-    map<QString,vector<QColor>> getDatabase() const { return m_datebaseMap; }
+    map<QString,vector<QColor>>& getDatabase() { return m_datebaseMap; }
+    void readDatabaseFromFile(QFile& file, QWidget* widget, bool cleanBuild = false);
 private:
     DatabaseManager() { }
     void checkForFilesInDatabase();

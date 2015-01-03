@@ -6,14 +6,22 @@ DominantColors& DominantColors::get()
     return instance;
 }
 
-double DominantColors::compareDominantColors(QRgb rgb1, QRgb rgb2)
-{
-    return sqrt((double)((qRed(rgb1)-qRed(rgb2))*(qRed(rgb1)-qRed(rgb2)) + (qGreen(rgb1)-qGreen(rgb2))*(qGreen(rgb1)-qGreen(rgb2)) + (qBlue(rgb1)-qBlue(rgb2))*(qBlue(rgb1)-qBlue(rgb2))));
-}
-
 double DominantColors::calculateDistance(int R1, int G1, int B1, int R2, int G2, int B2)
 {
     return sqrt((double)((R1-R2)*(R1-R2) + (G1-G2)*(G1-G2) + (B1-B2)*(B1-B2)));
+}
+
+double DominantColors::calculateDistance(vector<QColor>& v1, vector<QColor>& v2)
+{
+    double distance = 0;
+    int R1, G1, B1, R2, G2, B2;
+    for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i)
+    {
+        v1[i].getRgb(&R1,&G1,&B1);
+        v2[i].getRgb(&R2,&G2,&B2);
+        distance += calculateDistance(R1, G1, B1, R2, G2, B2);
+    }
+    return distance;
 }
 
 vector<QColor> DominantColors::countDominantColors(QImage image)
@@ -32,7 +40,6 @@ vector<QColor> DominantColors::countDominantColors(QImage image)
     for (int y = 0; y < h; ++y)
         for (int x = 0; x < w; ++x)
         {
-            // pobranie wartoœci BGR kolejnych pikseli
             B = qBlue(image.pixel(x,y));
             G = qGreen(image.pixel(x,y));
             R = qRed(image.pixel(x,y));
@@ -47,13 +54,13 @@ vector<QColor> DominantColors::countDominantColors(QImage image)
     unsigned meanB = sumB / (w*h);
 
     vector<Color> dominant_colors;
-    dominant_colors.reserve(8);
+    dominant_colors.reserve(DOMINANTCOLORS_NUMBER);
     Color newColor(meanR, meanG, meanB);
     newColor.points.reserve(w*h);
     dominant_colors.push_back(newColor);
     
 
-    for (int i = 0; i < 8; ++i)
+    for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i)
     {
         bool changesPerformed = true;
 
@@ -125,7 +132,7 @@ vector<QColor> DominantColors::countDominantColors(QImage image)
         delete[] oldDominantColorsAssignment;
         delete[] newDominantColorsAssignment;
 
-        if (i == 7)
+        if (i == DOMINANTCOLORS_NUMBER-1)
             continue;
 
 
@@ -163,7 +170,7 @@ vector<QColor> DominantColors::countDominantColors(QImage image)
     vector<QColor> dominantColors;
     dominantColors.reserve(8);
     
-    for (int i = 0; i < 8; ++i)
+    for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i)
         dominantColors.push_back(QColor(dominant_colors[i].R, dominant_colors[i].G, dominant_colors[i].B));
 
     return dominantColors;

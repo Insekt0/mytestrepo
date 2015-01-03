@@ -10,5 +10,7 @@ enum DATABASE_ERRORS
 
 #include <QString>
 const QString defaultPath = "D:\\studia\\MGR\\AIM\\projekt\\Base\\Examples\\";
+const QString databaseFilename="database.txt";
+const int DOMINANTCOLORS_NUMBER = 8;
 
 #endif // COMMON_H

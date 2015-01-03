@@ -23,11 +23,11 @@ class DominantColors {
 public:
     static DominantColors& get();
     vector<QColor> countDominantColors(QImage);
-    double compareDominantColors(QRgb, QRgb);
+    double calculateDistance(vector<QColor>&, vector<QColor>&);
 private:
+    double calculateDistance(int R1, int G1, int B1, int R2, int G2, int B2);
     DominantColors() { }
     double calculateVariance(QImage, Color);
-    double calculateDistance(int R1, int G1, int B1, int R2, int G2, int B2);
 };
 
 #endif // DOMINANTCOLOR_H

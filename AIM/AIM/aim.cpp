@@ -1,6 +1,7 @@
 #include "aim.h"
 #include "../../../Includes/DominantColor.h"
 #include "../../../Includes/DatabaseManager.h"
+#include <algorithm>
 #include <QFileDialog>
 #include <QMessageBox>
 
@@ -10,6 +11,7 @@ AIM::AIM(QWidget *parent)
     , m_mainImage(0)
     , m_pathToDatabase(defaultPath)
     , m_cleanAndRebuildFlag(false)
+    , m_hasChangedMainImage(false)
 {
     for (int i = 0; i < 8; ++i)
     {
@@ -70,10 +72,6 @@ void AIM::moveCellsIntoTables()
     m_dominantColors[5] = m_ui.dominant6;
     m_dominantColors[6] = m_ui.dominant7;
     m_dominantColors[7] = m_ui.dominant8;
-
-    for (int i = 0; i < 8; ++i)
-        m_picturesScene[i] = new QGraphicsScene(m_pictures[i]);
-    
 }
 
 void AIM::refreshDatabaseButtonClicked()
@@ -94,37 +92,99 @@ void AIM::refreshDatabaseButtonClicked()
     }
 }
 
+bool sortFunction (pair<QString,double> first_pair, pair<QString,double> second_pair) {
+    return first_pair.second < second_pair.second; 
+}
+
 void AIM::startButtonClicked()
 {
 
-    if(!m_mainImage)
+    if (!m_mainImage)
     {
-        // FIXME: popup with error
+        QString text = QString("Nie wybrano obrazka!");
+        QMessageBox::warning(this, tr(""), text);
         return;
     }
-    for (int i = 0; i < 8; ++i)
+
+    if(m_hasChangedMainImage)
     {
-        if (m_dominantColorsScene[i])
-            delete m_dominantColorsScene[i];
-        m_dominantColorsScene[i] = new QGraphicsScene(m_dominantColors[i]);
+        for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i)
+        {
+            if (m_dominantColorsScene[i])
+                delete m_dominantColorsScene[i];
+            m_dominantColorsScene[i] = new QGraphicsScene(m_dominantColors[i]);
+        }
+        m_mainImageDominantColors = DominantColors::get().countDominantColors(*m_mainImage);
+
+        int dominantWindowWidth = m_dominantColors[0]->width();
+        int dominantWindowHeight = m_dominantColors[0]->height();
+
+        for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i)
+        {
+            QPixmap pixmap(dominantWindowWidth, dominantWindowHeight);
+            pixmap.fill(m_mainImageDominantColors[i]);
+            m_dominantColorsScene[i]->addPixmap(pixmap);
+            m_dominantColors[i]->setScene(m_dominantColorsScene[i]);
+        }
+        m_hasChangedMainImage = false;
     }
 
-    vector<QColor> colors = DominantColors::get().countDominantColors(*m_mainImage);
+    QFile file(databaseFilename);
+    DatabaseManager::get().readDatabaseFromFile(file, this);
 
-    int dominantWindowWidth = m_dominantColors[0]->width();
-    int dominantWindowHeight = m_dominantColors[0]->height();
-
-    for (int i = 0; i < 8; ++i)
+    if (DatabaseManager::get().getDatabase().empty())
     {
-        QPixmap pixmap(dominantWindowWidth, dominantWindowHeight);
-        pixmap.fill(colors[i]);
-        m_dominantColorsScene[i]->addPixmap(pixmap);
-        m_dominantColors[i]->setScene(m_dominantColorsScene[i]);
+        QString text = QString("Baza danych pusta! Odœwie¿ bazê danych!");
+        QMessageBox::warning(this, tr(""), text);
+        return;
     }
 
-    // FIXME sprawdz czy baza jest aktualna
-    // Wywolaj nowa metode z klasy database manager ktora to sprawdza
-     
+    vector<pair<QString,double>> distanceVector;
+
+    double distance = 0;
+
+    std::map<QString,vector<QColor>> databaseMap = DatabaseManager::get().getDatabase();
+    
+    for (std::map<QString,vector<QColor>>::iterator it = databaseMap.begin(); it != databaseMap.end(); ++it)
+    {
+        vector<QColor> secondImageDominantColors = it->second;
+        distance = DominantColors::get().calculateDistance(m_mainImageDominantColors, secondImageDominantColors);
+        distanceVector.push_back(make_pair(it->first,distance));
+    }
+    sort(distanceVector.begin(), distanceVector.end(), sortFunction);
+    
+    int numberOfImages = 0;
+
+    for (int i = 0; i < distanceVector.size(); ++i)
+    {
+        if(numberOfImages == 8)
+            break;
+        QString filename = defaultPath + distanceVector[i].first;
+        QFile file(filename);
+        if (!file.exists())
+            continue;
+        
+        QImage image;
+        image.load(filename);
+        int width = m_pictures[numberOfImages]->width();
+        int height = m_pictures[numberOfImages]->height();
+        QPixmap pixmap = image.width() > image.height() ? QPixmap::fromImage(image).scaledToWidth(width-2) : QPixmap::fromImage(image).scaledToHeight(height-2);
+
+        if (m_picturesScene[numberOfImages])
+           delete m_picturesScene[numberOfImages];
+        m_picturesScene[numberOfImages] = new QGraphicsScene(m_pictures[numberOfImages]);
+
+        m_labels[numberOfImages]->setText(distanceVector[i].first);
+        m_picturesScene[numberOfImages]->addPixmap(pixmap);
+        m_pictures[i]->setScene(m_picturesScene[numberOfImages]);
+        ++numberOfImages;
+    }
+
+
+
+
+    // FIXME: Narysuj 8 najbardziej podobnych na ekranie
+
 }
 
 void AIM::loadImageButtonClicked()
@@ -135,6 +195,7 @@ void AIM::loadImageButtonClicked()
             delete m_mainPictureScene;
         if (!m_mainImage)
             m_mainImage = new QImage();
+        m_hasChangedMainImage = true;
         // QString text = QString("filename = %1").arg(filename);
         // QMessageBox::information(this, tr(""), text );
         m_mainPictureScene = new QGraphicsScene(m_ui.mainPicture);

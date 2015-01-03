@@ -14,18 +14,8 @@ DatabaseManager& DatabaseManager::get()
     return instance;
 }
 
-DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, bool cleanBuild)
+void DatabaseManager::readDatabaseFromFile(QFile& file, QWidget* widget, bool cleanBuild)
 {
-    m_datebaseMap.clear();
-    QStringList nameFilter;
-    nameFilter << "*.png" << "*.jpeg" << "*.jpg" << "*.bmp";
-    QDir directory(path);
-    m_filesInDirectory = directory.entryList(nameFilter);
-
-    int numFiles = m_filesInDirectory.size();
-
-    QString filename="database.txt";
-    QFile file(filename);
     if (!cleanBuild && file.exists() && file.open(QIODevice::ReadOnly))
     {
         QTextStream stream(&file);
@@ -38,7 +28,7 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, b
                 //break;
             lineInList = line.split('*');
             vector<QColor> dominantColors;
-            dominantColors.reserve(8);
+            dominantColors.reserve(DOMINANTCOLORS_NUMBER);
             if (lineInList.size() != 25)
             {
                 QMessageBox::warning(widget, widget->tr(""), widget->tr("Baza niepoprawna! Zostanie stworzona od nowa!") );
@@ -58,6 +48,27 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, b
         }
         file.close();
     }
+}
+
+
+DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, bool cleanBuild)
+{
+    m_datebaseMap.clear();
+    QStringList nameFilter;
+    nameFilter << "*.png" << "*.jpeg" << "*.jpg" << "*.bmp";
+    QDir directory(path);
+    m_filesInDirectory = directory.entryList(nameFilter);
+    int numFiles = m_filesInDirectory.size();
+
+    if(!numFiles)
+    {
+        QString text = QString("Wskazany katalog z baz¹ danych nie zawiera obrazów! Wska¿ inny katalog");
+        QMessageBox::warning(widget, widget->tr(""), text );
+        return DirectoryEmpty;
+    }
+    
+    QFile file(databaseFilename);
+    readDatabaseFromFile(file, widget, cleanBuild);
 
     QProgressDialog progress("Odswiezanie bazy danych...", "Przerwij", 0, numFiles, widget);
     progress.setWindowModality(Qt::WindowModal);
