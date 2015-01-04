@@ -15,8 +15,7 @@ DatabaseManager& DatabaseManager::get()
 
 void DatabaseManager::readDatabaseFromFile(QFile& file, QWidget* widget, bool cleanBuild)
 {
-    if (!cleanBuild && file.exists() && file.open(QIODevice::ReadOnly))
-    {
+    if (!cleanBuild && file.exists() && file.open(QIODevice::ReadOnly)) {
         QTextStream stream(&file);
         QString line;
         QStringList lineInList;
@@ -35,8 +34,7 @@ void DatabaseManager::readDatabaseFromFile(QFile& file, QWidget* widget, bool cl
 void DatabaseManager::insertToDatabase(int value, QString filename)
 {
     map<int, QStringList>::iterator it = m_datebaseMap.find(value);
-    if (it == m_datebaseMap.end())
-    {
+    if (it == m_datebaseMap.end()) {
         QStringList list;
         list << filename;
         m_datebaseMap.insert(make_pair(value, list));
@@ -87,8 +85,7 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, b
     for (int i = 0; i < numFiles; i++) {
         progress.setValue(i);
 
-        if (progress.wasCanceled())
-        {
+        if (progress.wasCanceled()) {
             hasRefreshed = false;
             break;
         }
@@ -100,14 +97,10 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, b
         QString fullFilename = path + "\\" + m_filesInDirectory[i];
         tempImage.load(fullFilename);
 
-        // QString text = QString("tempImage. name = %3, width() = %1, height() = %2").arg(QString::number(tempImage.width()),QString::number(tempImage.height()),fullFilename);
-        // QMessageBox::information(widget, widget->tr(""), text );
-
         vector<QColor> dominantColors = DominantColors::get().countDominantColors(tempImage);
         int R, G, B, value;
 
-        for (int k = 0; k < dominantColors.size(); ++k)
-        {
+        for (int k = 0; k < dominantColors.size(); ++k) {
             dominantColors[k].getRgb(&R, &G, &B);
             value = convertFromRGBToint(R, G, B);
             insertToDatabase(value, m_filesInDirectory[i]);
@@ -117,12 +110,10 @@ DATABASE_ERRORS DatabaseManager::updateDatabase(QString path, QWidget* widget, b
 
     file.remove();
 
-    if (file.open(QIODevice::WriteOnly))
-    {
+    if (file.open(QIODevice::WriteOnly)) {
         
         QTextStream stream(&file);
-        for (map<int, QStringList>::iterator it = m_datebaseMap.begin(); it != m_datebaseMap.end(); ++it)
-        {
+        for (map<int, QStringList>::iterator it = m_datebaseMap.begin(); it != m_datebaseMap.end(); ++it) {
             stream << it->first;
             QStringList files = it->second;
             for (int i = 0; i < files.size(); ++i)

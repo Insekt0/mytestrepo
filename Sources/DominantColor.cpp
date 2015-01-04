@@ -11,24 +11,10 @@ double DominantColors::calculateDistance(int R1, int G1, int B1, int R2, int G2,
     return sqrt((double)((R1-R2)*(R1-R2) + (G1-G2)*(G1-G2) + (B1-B2)*(B1-B2)));
 }
 
-double DominantColors::calculateDistance(vector<QColor>& v1, vector<QColor>& v2)
-{
-    double distance = 0;
-    int R1, G1, B1, R2, G2, B2;
-    for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i)
-    {
-        v1[i].getRgb(&R1,&G1,&B1);
-        v2[i].getRgb(&R2,&G2,&B2);
-        distance += calculateDistance(R1, G1, B1, R2, G2, B2);
-    }
-    return distance;
-}
-
 vector<QColor> DominantColors::countDominantColors(QImage image)
 {
     
     unsigned char R, G, B;
-
     unsigned sumR = 0;
     unsigned sumG = 0;
     unsigned sumB = 0;
@@ -38,8 +24,7 @@ vector<QColor> DominantColors::countDominantColors(QImage image)
 
 
     for (int y = 0; y < h; ++y)
-        for (int x = 0; x < w; ++x)
-        {
+        for (int x = 0; x < w; ++x) {
             B = qBlue(image.pixel(x,y));
             G = qGreen(image.pixel(x,y));
             R = qRed(image.pixel(x,y));
@@ -59,21 +44,17 @@ vector<QColor> DominantColors::countDominantColors(QImage image)
     newColor.points.reserve(w*h);
     dominant_colors.push_back(newColor);
     
-
-    for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i)
-    {
+    for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i) {
         bool changesPerformed = true;
 
         int* oldDominantColorsAssignment = new int[w*h]();
         int* newDominantColorsAssignment = new int[w*h]();
 
-        for (int j = 0; j < w*h; ++j)
-        {
+        for (int j = 0; j < w*h; ++j) {
             oldDominantColorsAssignment[j] = -1;
             newDominantColorsAssignment[j] = -1;
         }
-        while (changesPerformed)
-        {
+        while (changesPerformed) {
             changesPerformed = false;
             for (int j = 0; j < w*h; ++j)
                 oldDominantColorsAssignment[j] = newDominantColorsAssignment[j];
@@ -82,17 +63,14 @@ vector<QColor> DominantColors::countDominantColors(QImage image)
                 dominant_colors[j].points.clear();
 
             for (int y = 0; y < h; ++y)
-                for (int x = 0; x < w; ++x)
-                {
+                for (int x = 0; x < w; ++x) {
                     int toWhichDominantColorThisPointBelongs = 0;
                     double oldDistance = std::numeric_limits<double>::max();
                     double newDistance = 0;
  
-                    for (unsigned k = 0; k < dominant_colors.size(); ++k)
-                    {
+                    for (unsigned k = 0; k < dominant_colors.size(); ++k) {
                         newDistance = calculateDistance(qRed(image.pixel(x,y)), qGreen(image.pixel(x,y)), qBlue(image.pixel(x,y)), dominant_colors[k].R, dominant_colors[k].G, dominant_colors[k].B);
-                        if(newDistance < oldDistance)
-                        {
+                        if(newDistance < oldDistance) {
                             toWhichDominantColorThisPointBelongs = k;
                             oldDistance = newDistance;
                         }
@@ -104,17 +82,14 @@ vector<QColor> DominantColors::countDominantColors(QImage image)
                         changesPerformed = true;
                 }
             
-            if(changesPerformed)
-            {
-                for (unsigned j = 0; j < dominant_colors.size(); ++j)
-                {
+            if(changesPerformed) {
+                for (unsigned j = 0; j < dominant_colors.size(); ++j) {
                     if (!dominant_colors[j].points.size())
                         continue;
                     unsigned newSumR = 0; 
                     unsigned newSumG = 0;
                     unsigned newSumB = 0;
-                    for (unsigned k = 0; k < dominant_colors[j].points.size(); ++k)
-                    {
+                    for (unsigned k = 0; k < dominant_colors[j].points.size(); ++k) {
                         int x = dominant_colors[j].points[k] % w;
                         int y = dominant_colors[j].points[k] / w;
                         newSumB += qBlue(image.pixel(x,y));
@@ -135,17 +110,14 @@ vector<QColor> DominantColors::countDominantColors(QImage image)
         if (i == DOMINANTCOLORS_NUMBER-1)
             continue;
 
-
         double maxVariance = 0;
         double variance = 0;
         int highestVarianceIndex = 0;
         
 
-        for (unsigned j = 0; j < dominant_colors.size(); ++j)
-        {
+        for (unsigned j = 0; j < dominant_colors.size(); ++j) {
             variance = calculateVariance(image, dominant_colors[j]);
-            if(variance > maxVariance)
-            {
+            if(variance > maxVariance) {
                 highestVarianceIndex = j;
                 maxVariance = variance;
             }
@@ -194,8 +166,7 @@ double DominantColors::calculateVariance(QImage image, Color color)
     if(size <= 1)
         return 0;
 
-    for(unsigned i = 0; i < size; ++i)
-    {
+    for(unsigned i = 0; i < size; ++i) {
         int x = color.points[i] % image.width();
         int y = color.points[i] / image.width();
 
@@ -219,5 +190,4 @@ double DominantColors::calculateVariance(QImage image, Color color)
     varianceB /= size * (size - 1);
 
     return sqrt((double)(varianceR*varianceR + varianceG*varianceG + varianceB*varianceB));
-
 }

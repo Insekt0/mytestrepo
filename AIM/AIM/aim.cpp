@@ -13,8 +13,7 @@ AIM::AIM(QWidget *parent)
     , m_cleanAndRebuildFlag(false)
     , m_hasChangedMainImage(false)
 {
-    for (int i = 0; i < 8; ++i)
-    {
+    for (int i = 0; i < 8; ++i) {
         m_dominantColorsScene[i] = 0;
         m_picturesScene[i] = 0;
     }
@@ -31,8 +30,7 @@ AIM::AIM(QWidget *parent)
 
 AIM::~AIM()
 {
-    for (int i = 0; i < 8; ++i)
-    {
+    for (int i = 0; i < 8; ++i) {
         if (m_dominantColorsScene[i])
             delete m_dominantColorsScene[i];
         if (m_picturesScene[i])
@@ -76,8 +74,7 @@ void AIM::moveCellsIntoTables()
 
 void AIM::refreshDatabaseButtonClicked()
 {
-    switch (DatabaseManager::get().updateDatabase(m_pathToDatabase, this, m_cleanAndRebuildFlag))
-    {
+    switch (DatabaseManager::get().updateDatabase(m_pathToDatabase, this, m_cleanAndRebuildFlag)) {
     case Ok:    
         QMessageBox::information(this, tr(""), tr("Baza zostala zaktualizowana") );
         break;
@@ -92,28 +89,19 @@ void AIM::refreshDatabaseButtonClicked()
     }
 }
 
-//bool sortFunction (pair<QString,double> first_pair, pair<QString,double> second_pair) {
-//    return first_pair.second > second_pair.second; 
-//}
-
 struct sortStruct
 {
-    bool operator()(int value1, int value2) const
-    {
-        return value1 > value2;
-    }
+    bool operator()(int value1, int value2) const { return value1 > value2; }
 };
 
 void AIM::startButtonClicked()
 {
 
-    if (!m_mainImage)
-    {
+    if (!m_mainImage) {
         QString text = QString("Nie wybrano obrazka!");
         QMessageBox::warning(this, tr(""), text);
         return;
     }
-
 
     QStringList nameFilter;
     nameFilter << "*.png" << "*.jpeg" << "*.jpg" << "*.bmp";
@@ -121,17 +109,14 @@ void AIM::startButtonClicked()
     QStringList filesInDirectory = directory.entryList(nameFilter);
     int numFiles = filesInDirectory.size();
 
-    if(!numFiles)
-    {
+    if(!numFiles) {
         QString text = QString("Katalog z baza danych nie zawiera obrazkow! Wskaz inny katalog!");
         QMessageBox::warning(this, tr(""), text);
         return;
     }
 
-    if(m_hasChangedMainImage)
-    {
-        for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i)
-        {
+    if(m_hasChangedMainImage) {
+        for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i) {
             if (m_dominantColorsScene[i])
                 delete m_dominantColorsScene[i];
             m_dominantColorsScene[i] = new QGraphicsScene(m_dominantColors[i]);
@@ -141,8 +126,7 @@ void AIM::startButtonClicked()
         int dominantWindowWidth = m_dominantColors[0]->width();
         int dominantWindowHeight = m_dominantColors[0]->height();
 
-        for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i)
-        {
+        for (int i = 0; i < DOMINANTCOLORS_NUMBER; ++i) {
             QPixmap pixmap(dominantWindowWidth, dominantWindowHeight);
             pixmap.fill(m_mainImageDominantColors[i]);
             m_dominantColorsScene[i]->addPixmap(pixmap);
@@ -154,8 +138,7 @@ void AIM::startButtonClicked()
     QFile file(databaseFilename);
     DatabaseManager::get().readDatabaseFromFile(file, this);
 
-    if (DatabaseManager::get().getDatabase().empty())
-    {
+    if (DatabaseManager::get().getDatabase().empty()) {
         QString text = QString("Baza danych pusta! Odœwie¿ bazê danych!");
         QMessageBox::warning(this, tr(""), text);
         return;
@@ -171,8 +154,7 @@ void AIM::startButtonClicked()
     int value, R, G, B;
     map<int, QStringList> databaseMap = DatabaseManager::get().getDatabase();
     map<int, QStringList>::iterator it;
-    for (int i = 0; i < m_mainImageDominantColors.size(); ++i)
-    {
+    for (int i = 0; i < m_mainImageDominantColors.size(); ++i) {
         m_mainImageDominantColors[i].getRgb(&R, &G, &B);
         value = DatabaseManager::get().convertFromRGBToint(R, G, B);
         it = databaseMap.find(value);
@@ -182,27 +164,15 @@ void AIM::startButtonClicked()
 
         QStringList filesWithMatchingDominantColor = it->second;
         for (int k = 0; k < filesWithMatchingDominantColor.size(); ++k)
-        {
-            //matchMapTempIterator = matchMapTemp.find(filesWithMatchingDominantColor[k]);
-            //if (matchMapTempIterator == matchMapTemp.end())
-            //{
-            //    matchMapTemp.insert(make_pair(filesWithMatchingDominantColor[k], 1));
-            //    continue;
-            //}
-            //++matchMapTempIterator->second;
             matchMapTemp[filesWithMatchingDominantColor[k]] += 1;
-        }
     }
 
     for (matchMapTempIterator = matchMapTemp.begin(); matchMapTempIterator != matchMapTemp.end(); ++matchMapTempIterator)
         matchMap.insert(make_pair(matchMapTempIterator->second, matchMapTempIterator->first));
 
-    //sort(matchMap.begin(), matchMap.end(), sortFunction);
-    
     int numberOfImages = 0;
 
-    for (matchMapIterator = matchMap.begin(); matchMapIterator != matchMap.end(); ++matchMapIterator)
-    {
+    for (matchMapIterator = matchMap.begin(); matchMapIterator != matchMap.end(); ++matchMapIterator) {
         if(numberOfImages == 8)
             break;
         QString filename = m_pathToDatabase + "\\" + matchMapIterator->second;
@@ -225,21 +195,19 @@ void AIM::startButtonClicked()
         m_pictures[numberOfImages]->setScene(m_picturesScene[numberOfImages]);
         ++numberOfImages;
     }
-
 }
 
 void AIM::loadImageButtonClicked()
 {
     QString filename = QFileDialog::getOpenFileName(this,tr("Otw\303\263rz plik z obrazem"), ".", tr("JPEG (*.jpg;*.jpeg);; PNG (*.png);; BMP (*.bmp)"));
-    if(!filename.isEmpty()){
+    if (!filename.isEmpty()) {
         if (m_mainPictureScene)
             delete m_mainPictureScene;
         if (!m_mainImage)
             m_mainImage = new QImage();
         m_hasChangedMainImage = true;
 
-        for (int i = 0; i < 8; ++i)
-        {
+        for (int i = 0; i < 8; ++i) {
             if (m_picturesScene[i])
                 m_picturesScene[i]->clear();
             if (m_labels[i])
@@ -248,8 +216,6 @@ void AIM::loadImageButtonClicked()
                 m_dominantColorsScene[i]->clear();
         }
             
-        // QString text = QString("filename = %1").arg(filename);
-        // QMessageBox::information(this, tr(""), text );
         m_mainPictureScene = new QGraphicsScene(m_ui.mainPicture);
         m_mainImage->load(filename);
         int width = m_ui.mainPicture->width();

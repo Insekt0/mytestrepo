@@ -18,6 +18,7 @@ public:
     QStringList& getDatabaseFilesList() { return m_databaseMapFilesList; }
     void readDatabaseFromFile(QFile& file, QWidget* widget, bool cleanBuild = false);
     unsigned convertFromRGBToint(int R, int G, int B);
+
 private:
     DatabaseManager() { }
     void checkForFilesInDatabase();
