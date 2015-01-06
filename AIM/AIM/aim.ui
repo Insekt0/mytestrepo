@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>860</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>1000</width>
-    <height>860</height>
+    <height>700</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>1000</width>
-    <height>860</height>
+    <height>700</height>
    </size>
   </property>
   <property name="mouseTracking">
@@ -41,7 +41,7 @@
    <widget class="QGraphicsView" name="mainPicture">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>160</x>
       <y>30</y>
       <width>200</width>
       <height>200</height>
@@ -63,10 +63,10 @@
    <widget class="QGraphicsView" name="picture1">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>330</y>
-      <width>150</width>
-      <height>150</height>
+      <x>110</x>
+      <y>300</y>
+      <width>100</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -86,9 +86,9 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>330</y>
-      <width>150</width>
-      <height>150</height>
+      <y>300</y>
+      <width>100</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -107,10 +107,10 @@
    <widget class="QGraphicsView" name="picture3">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>330</y>
-      <width>150</width>
-      <height>150</height>
+      <x>510</x>
+      <y>300</y>
+      <width>100</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -129,10 +129,10 @@
    <widget class="QGraphicsView" name="picture4">
     <property name="geometry">
      <rect>
-      <x>730</x>
-      <y>330</y>
-      <width>150</width>
-      <height>150</height>
+      <x>710</x>
+      <y>300</y>
+      <width>100</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -151,10 +151,10 @@
    <widget class="QGraphicsView" name="picture5">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>540</y>
-      <width>150</width>
-      <height>150</height>
+      <x>110</x>
+      <y>440</y>
+      <width>100</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -174,9 +174,9 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>540</y>
-      <width>150</width>
-      <height>150</height>
+      <y>440</y>
+      <width>100</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -195,10 +195,10 @@
    <widget class="QGraphicsView" name="picture7">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>540</y>
-      <width>150</width>
-      <height>150</height>
+      <x>510</x>
+      <y>440</y>
+      <width>100</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -217,10 +217,10 @@
    <widget class="QGraphicsView" name="picture8">
     <property name="geometry">
      <rect>
-      <x>730</x>
-      <y>540</y>
-      <width>150</width>
-      <height>150</height>
+      <x>710</x>
+      <y>440</y>
+      <width>100</width>
+      <height>100</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -239,9 +239,9 @@
    <widget class="QLineEdit" name="text1">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>490</y>
-      <width>150</width>
+      <x>89</x>
+      <y>410</y>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -252,7 +252,7 @@
    <widget class="QLineEdit" name="mainText">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>170</x>
       <y>240</y>
       <width>181</width>
       <height>20</height>
@@ -268,9 +268,9 @@
    <widget class="QLineEdit" name="text2">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>490</y>
-      <width>150</width>
+      <x>290</x>
+      <y>410</y>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -281,9 +281,9 @@
    <widget class="QLineEdit" name="text3">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>490</y>
-      <width>150</width>
+      <x>490</x>
+      <y>410</y>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -294,9 +294,9 @@
    <widget class="QLineEdit" name="text4">
     <property name="geometry">
      <rect>
-      <x>730</x>
-      <y>490</y>
-      <width>150</width>
+      <x>690</x>
+      <y>410</y>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -307,9 +307,9 @@
    <widget class="QLineEdit" name="text5">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>700</y>
-      <width>150</width>
+      <x>90</x>
+      <y>550</y>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -320,9 +320,9 @@
    <widget class="QLineEdit" name="text6">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>700</y>
-      <width>150</width>
+      <x>290</x>
+      <y>550</y>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -333,9 +333,9 @@
    <widget class="QLineEdit" name="text7">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>700</y>
-      <width>150</width>
+      <x>490</x>
+      <y>550</y>
+      <width>141</width>
       <height>20</height>
      </rect>
     </property>
@@ -346,8 +346,8 @@
    <widget class="QLineEdit" name="text8">
     <property name="geometry">
      <rect>
-      <x>730</x>
-      <y>700</y>
+      <x>680</x>
+      <y>550</y>
       <width>150</width>
       <height>20</height>
      </rect>
@@ -360,7 +360,7 @@
     <property name="geometry">
      <rect>
       <x>140</x>
-      <y>740</y>
+      <y>580</y>
       <width>111</width>
       <height>16</height>
      </rect>
@@ -373,7 +373,7 @@
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>760</y>
+      <y>600</y>
       <width>231</width>
       <height>22</height>
      </rect>
@@ -389,7 +389,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>760</y>
+      <y>600</y>
       <width>111</width>
       <height>25</height>
      </rect>
@@ -402,7 +402,7 @@
     <property name="geometry">
      <rect>
       <x>730</x>
-      <y>760</y>
+      <y>600</y>
       <width>151</width>
       <height>25</height>
      </rect>
@@ -603,8 +603,8 @@
    <widget class="QLabel" name="basePathLabel">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>290</y>
+      <x>380</x>
+      <y>270</y>
       <width>221</width>
       <height>20</height>
      </rect>
@@ -616,7 +616,7 @@
    <widget class="QLabel" name="mainPictureLabel">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>230</x>
       <y>10</y>
       <width>111</width>
       <height>16</height>
@@ -630,7 +630,7 @@
     <property name="geometry">
      <rect>
       <x>520</x>
-      <y>760</y>
+      <y>600</y>
       <width>151</width>
       <height>25</height>
      </rect>
@@ -643,7 +643,7 @@
     <property name="geometry">
      <rect>
       <x>500</x>
-      <y>790</y>
+      <y>630</y>
       <width>191</width>
       <height>20</height>
      </rect>
